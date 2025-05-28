@@ -1,0 +1,130 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum OrderType {
+  INDIVIDUAL
+  CUSTOMER
+}
+
+model Product {
+  id            Int              @id @default(autoincrement())
+  name          String
+  slug          String           @unique
+  description   String?          // Big description
+  imageUrl      String?          // Main image
+  image2        String?   // Second image
+  brochureUrl   String?          // URL to downloadable brochure PDF
+  videoUrl      String?          // Optional product video URL
+
+  // Relations
+  orders        Order[]
+  brochureRequests BrochureRequest[] 
+  features      Feature[]
+  tcoSections   TcoSection[]
+  demoform      DemoForm[]
+
+  createdAt     DateTime         @default(now())
+  updatedAt DateTime @updatedAt @default(now())
+
+}
+
+model Order {
+  id            Int      @id @default(autoincrement())
+  name          String
+  phoneNumber   String
+  email         String
+  address       String
+  country       String
+  state         String
+  city          String
+  pincode       String
+  aadharNumber  String
+  panNumber     String
+  orderType     OrderType
+  message       String?
+  product       Product  @relation(fields: [productId], references: [id])
+  productId     Int
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+model DemoForm {
+  id          Int      @id @default(autoincrement())
+  name        String
+  phoneNumber String
+  email       String
+  address     String
+  message     String?
+
+  // Relation to selected product
+  product     Product  @relation(fields: [productId], references: [id])
+  productId   Int
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+
+model BrochureRequest {
+  id          Int      @id @default(autoincrement())
+  name        String
+  email       String
+  phoneNumber String
+  product     Product  @relation(fields: [productId], references: [id])
+  productId   Int
+  requestedAt DateTime @default(now())
+}
+
+// Feature section for product: image + up to 3 features text
+model Feature {
+  id          Int       @id @default(autoincrement())
+  product     Product   @relation(fields: [productId], references: [id])
+  productId   Int
+  imageUrl    String?   // image for feature section
+  title       String?   // optional title for the feature
+  description String?   // optional description
+
+  // Up to 3 features text (can be null)
+  feature1    String?
+  feature2    String?
+  feature3    String?
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+// TCO (Total Cost of Ownership) section with multiple types of descriptions and a calculation value
+model TcoSection {
+  id             Int       @id @default(autoincrement())
+  product        Product   @relation(fields: [productId], references: [id])
+  productId      Int
+  heading        String?
+  description    String?   // paragraph describing
+  dieselSaving   Float?    // calculated diesel saving value or similar metric
+  graphUrl       String?   // URL to graph image or resource
+
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+}
+
+
+model Blog {
+  id              Int      @id @default(autoincrement())
+  title           String
+  subtitle        String?
+  excerpt         String   // short description
+  postedOn        DateTime
+  readingTime     String   // e.g., "4 min reading time"
+  imageUrl        String?
+  longDescription String   @db.Text  // for long blog content
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
