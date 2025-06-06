@@ -25,9 +25,7 @@ model Product {
 
   // Relations
   orders        Order[]
-  brochureRequests BrochureRequest[] 
   features      Feature[]
-  tcoSections   TcoSection[]
   demoform      DemoForm[]
 
   createdAt     DateTime         @default(now())
@@ -71,16 +69,6 @@ model DemoForm {
 }
 
 
-model BrochureRequest {
-  id          Int      @id @default(autoincrement())
-  name        String
-  email       String
-  phoneNumber String
-  product     Product  @relation(fields: [productId], references: [id])
-  productId   Int
-  requestedAt DateTime @default(now())
-}
-
 // Feature section for product: image + up to 3 features text
 model Feature {
   id          Int       @id @default(autoincrement())
@@ -98,21 +86,6 @@ model Feature {
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 }
-
-// TCO (Total Cost of Ownership) section with multiple types of descriptions and a calculation value
-model TcoSection {
-  id             Int       @id @default(autoincrement())
-  product        Product   @relation(fields: [productId], references: [id])
-  productId      Int
-  heading        String?
-  description    String?   // paragraph describing
-  dieselSaving   Float?    // calculated diesel saving value or similar metric
-  graphUrl       String?   // URL to graph image or resource
-
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
-}
-
 
 model Blog {
   id              Int      @id @default(autoincrement())
