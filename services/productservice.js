@@ -13,8 +13,6 @@ const getProductById = async (id) => {
     where: { id },
     include: {
       features: true,
-      brochureRequests: true,
-      tcoSections: true,
     },
   });
 };
