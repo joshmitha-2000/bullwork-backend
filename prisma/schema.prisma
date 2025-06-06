@@ -20,7 +20,6 @@ model Product {
   description   String?          // Big description
   imageUrl      String?          // Main image
   image2        String?   // Second image
-  brochureUrl   String?          // URL to downloadable brochure PDF
   videoUrl      String?          // Optional product video URL
 
   // Relations
